@@ -6,15 +6,17 @@ import type { Shot } from '../utils/cameraPath'
  */
 export const SHOTS = {
   intro: { position: [9.5, 2.6, 11], target: [0, 0.6, 0], fov: 26 },
-  hero: { position: [4.6, 0.85, 5.4], target: [-0.2, 0.55, 0], fov: 30 },
+  hero: { position: [5.2, 1.05, 7.4], target: [-0.9, 0.05, 0.3], fov: 30 },
   front: { position: [0.001, 0.72, 6.4], target: [0, 0.58, 0], fov: 27 },
   profile: { position: [7.8, 0.75, 0.2], target: [0, 0.6, 0.2], fov: 26 },
   rear: { position: [-3.6, 1.15, -5.6], target: [0, 0.68, -0.2], fov: 28 },
   wheel: { position: [2.9, 0.42, 2.9], target: [0.85, 0.36, 1.3], fov: 22 },
-  plan: { position: [0.001, 9.5, 0.6], target: [0, 0, 0], fov: 28 },
-  design: { position: [5.2, 1.5, 4.6], target: [0, 0.5, 0], fov: 32 },
-  studio: { position: [5.4, 1.7, 5.6], target: [0, 0.5, 0], fov: 32 },
-  finale: { position: [-5.8, 0.5, 4.2], target: [0, 0.6, 0], fov: 28 },
+  plan: { position: [0.001, 12.5, 0.8], target: [0, 0, 0], fov: 28 },
+  // Car framed right of the copy column.
+  design: { position: [5.6, 1.9, 6.0], target: [-0.8, 0.3, 0.75], fov: 30 },
+  // Car framed left of the configurator panel.
+  studio: { position: [6.4, 1.9, 7.0], target: [0.8, 0.35, -0.76], fov: 30 },
+  finale: { position: [-7.2, 0.55, 5.4], target: [0, 0.75, 0], fov: 28 },
 } as const satisfies Record<string, Shot>
 
 export type ShotId = keyof typeof SHOTS

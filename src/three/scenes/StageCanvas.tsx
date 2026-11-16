@@ -33,10 +33,12 @@ const ReadySignal = () => {
 
 export interface StageCanvasProps {
   readonly tier: DeviceTier
+  /** Render mode for still captures: fixed DPR, no adaptive downgrades. */
+  readonly capture?: boolean
 }
 
 /** The single persistent WebGL stage shared by every section. */
-const StageCanvas = ({ tier }: StageCanvasProps) => {
+const StageCanvas = ({ tier, capture = false }: StageCanvasProps) => {
   const stageVisible = useSceneStore((s) => s.stageVisible)
   const mode = useSceneStore((s) => s.mode)
   const [min, max] = DPR_RANGE[tier]
@@ -60,12 +62,14 @@ const StageCanvas = ({ tier }: StageCanvasProps) => {
       }}
       aria-hidden="true"
     >
-      <PerformanceMonitor
-        onDecline={() => setDpr((d) => Math.max(min, d - 0.5))}
-        onIncline={() => setDpr((d) => Math.min(max, d + 0.25))}
-        flipflops={3}
-        onFallback={() => setDpr(min)}
-      />
+      {capture ? null : (
+        <PerformanceMonitor
+          onDecline={() => setDpr((d) => Math.max(min, d - 0.5))}
+          onIncline={() => setDpr((d) => Math.min(max, d + 0.25))}
+          flipflops={3}
+          onFallback={() => setDpr(min)}
+        />
+      )}
       <ProgressBridge />
       <SceneLighting shadows={shadows} envResolution={tier === 'high' ? 512 : 256} />
       <Suspense fallback={null}>

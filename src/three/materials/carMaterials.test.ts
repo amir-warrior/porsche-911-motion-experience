@@ -1,27 +1,34 @@
 import { describe, expect, it } from 'vitest'
 import { Color, MeshStandardMaterial } from 'three'
 import { PAINTS, WHEEL_FINISHES } from '../../data/paints'
-import { applyPaint, applyWheelFinish, classifyPart, createPaintMaterial } from './carMaterials'
+import { applyPaint, applyWheelFinish, classifyPart, createGlassMaterial, createPaintMaterial } from './carMaterials'
 
 describe('classifyPart', () => {
-  it('detects common glTF naming conventions', () => {
-    expect(classifyPart('Object_12', 'CarPaint')).toBe('paint')
-    expect(classifyPart('body_main', 'mat01')).toBe('paint')
-    expect(classifyPart('FrontWindow', 'mat')).toBe('glass')
-    expect(classifyPart('wheel_FL', 'rim_mat')).toBe('wheel')
-    expect(classifyPart('seat', 'leather')).toBe('other')
+  it('maps the role names baked into the optimized GLB', () => {
+    expect(classifyPart('paint')).toBe('paint')
+    expect(classifyPart('wheel_rim')).toBe('wheel_rim')
+    expect(classifyPart('glass')).toBe('glass')
+    expect(classifyPart('headlight')).toBe('headlight')
+    expect(classifyPart('chrome')).toBe('other')
+    expect(classifyPart('')).toBe('other')
   })
 })
 
 describe('materials', () => {
-  it('creates a clearcoat paint and applies paint options', () => {
-    const mat = createPaintMaterial(new MeshStandardMaterial())
+  it('creates clearcoat paint and applies paint options', () => {
+    const mat = createPaintMaterial()
     const target = new Color()
     const red = PAINTS.find((p) => p.id === 'guards-red')!
     applyPaint(mat, red, target)
     expect(mat.clearcoat).toBe(1)
     expect(mat.roughness).toBe(red.roughness)
     expect(target.r).toBeGreaterThan(target.g)
+  })
+
+  it('creates dark reflective glass', () => {
+    const glass = createGlassMaterial()
+    expect(glass.roughness).toBeLessThan(0.1)
+    expect(glass.color.r).toBeLessThan(0.01)
   })
 
   it('applies wheel finishes', () => {

@@ -21,7 +21,7 @@ const failStage = () => {
  * the layer fades out while solid sections cover the screen and only accepts
  * pointer input while the visitor explores.
  */
-export const StageLayer = () => {
+export const StageLayer = ({ minimal = false }: { readonly minimal?: boolean }) => {
   const [tier] = useState<DeviceTier>(() => classifyDevice(readDeviceSignals()))
   const [webglOk] = useState(() => supportsWebGL())
   const webgl = useSceneStore((s) => s.webgl)
@@ -52,6 +52,7 @@ export const StageLayer = () => {
         style={{ backgroundColor: ENVIRONMENTS[environment].background }}
       />
       <div
+        hidden={minimal}
         data-stage-numeral
         aria-hidden="true"
         className="type-display pointer-events-none absolute inset-x-0 top-[14svh] select-none text-center text-[42vw] leading-none text-transparent [-webkit-text-stroke:1px_rgba(245,245,243,0.14)] md:top-[6svh] md:text-[36vw]"
@@ -63,12 +64,14 @@ export const StageLayer = () => {
       ) : (
         <ErrorBoundary fallback={<StageFallback />} onError={failStage}>
           <Suspense fallback={null}>
-            <StageCanvas tier={tier} />
+            <StageCanvas tier={minimal ? 'high' : tier} capture={minimal} />
           </Suspense>
         </ErrorBoundary>
       )}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(7,7,7,0.7)_100%)]" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink/80 to-transparent" />
+      {minimal ? null : (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink/80 to-transparent" />
+      )}
     </div>
   )
 }

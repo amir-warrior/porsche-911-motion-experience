@@ -4,14 +4,22 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { Box3, Color, Mesh, MeshStandardMaterial, Vector3, type Object3D } from 'three'
 import { findPaint, findWheel } from '../../data/paints'
 import { useSceneStore } from '../../hooks/useSceneStore'
-import { applyPaint, applyWheelFinish, classifyPart, createPaintMaterial } from '../materials/carMaterials'
+import {
+  applyPaint,
+  applyWheelFinish,
+  classifyPart,
+  createGlassMaterial,
+  createPaintMaterial,
+  EMISSIVE_INTENSITY,
+} from '../materials/carMaterials'
 import { MODEL_LENGTH, MODEL_URL, MODEL_YAW } from './modelConfig'
 
 const COLOR_LAMBDA = 3
 
 interface Parts {
   readonly paint: ReturnType<typeof createPaintMaterial>
-  readonly wheels: MeshStandardMaterial[]
+  readonly glass: ReturnType<typeof createGlassMaterial>
+  readonly wheels: readonly MeshStandardMaterial[]
 }
 
 /** Scale to MODEL_LENGTH, centre on X/Z and rest the wheels on y = 0. */
@@ -28,28 +36,28 @@ const normalize = (root: Object3D): void => {
   root.position.set(-center.x, -scaled.min.y, -center.z)
 }
 
-/** Swap body paint for one shared clearcoat material and collect wheel materials. */
+/**
+ * Swap the baked role materials for runtime ones: one shared clearcoat paint,
+ * reflective glass, glowing lamps, and the wheel-rim materials collected for
+ * the wheel-finish option.
+ */
 const prepareParts = (root: Object3D, castShadow: boolean): Parts => {
   const paint = createPaintMaterial()
-  const wheels: MeshStandardMaterial[] = []
+  const glass = createGlassMaterial()
+  const wheels = new Set<MeshStandardMaterial>()
   root.traverse((node) => {
     if (!(node instanceof Mesh)) return
     node.castShadow = castShadow
     node.receiveShadow = castShadow
     const material = Array.isArray(node.material) ? node.material[0] : node.material
-    const kind = classifyPart(node.name, material?.name ?? '')
-    if (kind === 'paint') {
-      if (material instanceof MeshStandardMaterial && material.normalMap) paint.normalMap = material.normalMap
-      node.material = paint
-    } else if (kind === 'wheel' && material instanceof MeshStandardMaterial) {
-      const own = material.clone()
-      node.material = own
-      wheels.push(own)
-    } else if (kind === 'glass' && material instanceof MeshStandardMaterial) {
-      material.envMapIntensity = 1.4
-    }
+    if (!(material instanceof MeshStandardMaterial)) return
+    const role = classifyPart(material.name)
+    if (role === 'paint') node.material = paint
+    else if (role === 'glass') node.material = glass
+    else if (role === 'wheel_rim') wheels.add(material)
+    else if (role === 'headlight' || role === 'taillight') material.emissiveIntensity = EMISSIVE_INTENSITY[role] ?? 1
   })
-  return { paint, wheels }
+  return { paint, glass, wheels: [...wheels] }
 }
 
 export const Porsche911 = ({ shadows }: { readonly shadows: boolean }) => {
@@ -83,7 +91,7 @@ export const Porsche911 = ({ shadows }: { readonly shadows: boolean }) => {
   useEffect(
     () => () => {
       parts.paint.dispose()
-      parts.wheels.forEach((m) => m.dispose())
+      parts.glass.dispose()
     },
     [parts],
   )

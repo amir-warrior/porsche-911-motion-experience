@@ -113,13 +113,13 @@ export const Hero = () => {
         </p>
       </div>
 
-      <div className="grid items-end gap-8 md:grid-cols-[1fr_auto]">
+      <div className="grid items-end gap-8 md:grid-cols-[minmax(0,1fr)_auto]">
         <div data-hero-title>
           <SplitWords
             as="h1"
             id="hero-title"
             text={'Beyond\nLimits'}
-            className="type-display text-[19vw] text-paper md:text-[12.5vw]"
+            className="type-display text-[19vw] text-paper md:text-[10vw] xl:text-[12.5vw]"
           />
         </div>
 

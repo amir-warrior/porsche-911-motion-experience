@@ -32,6 +32,7 @@
   }
 
   html {
+    overflow-x: clip;
     background: var(--color-ink);
     color: var(--color-paper);
     -webkit-font-smoothing: antialiased;

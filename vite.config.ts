@@ -8,6 +8,8 @@ export default defineConfig({
   build: {
     target: 'es2022',
     chunkSizeWarningLimit: 1200,
+    // Never inline fonts as data: URIs — keep them cacheable files (and CSP-friendly).
+    assetsInlineLimit: (file: string) => (file.endsWith('.woff2') ? false : undefined),
   },
   test: {
     environment: 'jsdom',

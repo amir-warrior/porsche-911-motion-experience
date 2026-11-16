@@ -11,7 +11,7 @@
 ![Vite](https://img.shields.io/badge/Vite-8-0b0b0b?logo=vite&logoColor=ffd62e)
 ![License](https://img.shields.io/badge/code-MIT-0b0b0b)
 
-<!-- LIVE_DEMO -->
+### [▶ Live demo — porsche-911-motion-experience.vercel.app](https://porsche-911-motion-experience.vercel.app)
 
 ![Hero of the site: a white 911 Turbo S in front of a giant outlined 911 numeral, above the headline Beyond Limits](docs/screenshot-hero.jpg)
 

@@ -32,3 +32,6 @@ assets-src/
 Thumbs.db
 *.suo
 *.sw?
+
+.vercel
+.env*

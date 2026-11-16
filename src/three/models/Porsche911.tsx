@@ -24,7 +24,10 @@ interface Parts {
 
 /** Scale to MODEL_LENGTH, centre on X/Z and rest the wheels on y = 0. */
 const normalize = (root: Object3D): void => {
-  root.rotation.y = MODEL_YAW
+  // Reset first so repeated calls (StrictMode, HMR) are idempotent.
+  root.scale.setScalar(1)
+  root.position.set(0, 0, 0)
+  root.rotation.set(0, MODEL_YAW, 0)
   root.updateMatrixWorld(true)
   const box = new Box3().setFromObject(root)
   const size = box.getSize(new Vector3())
@@ -36,15 +39,23 @@ const normalize = (root: Object3D): void => {
   root.position.set(-center.x, -scaled.min.y, -center.z)
 }
 
-/**
- * Swap the baked role materials for runtime ones: one shared clearcoat paint,
- * reflective glass, glowing lamps, and the wheel-rim materials collected for
- * the wheel-finish option.
- */
-const prepareParts = (root: Object3D, castShadow: boolean): Parts => {
-  const paint = createPaintMaterial()
-  const glass = createGlassMaterial()
+/** Pure: create the runtime materials and collect the wheel-rim materials. */
+const createParts = (root: Object3D): Parts => {
   const wheels = new Set<MeshStandardMaterial>()
+  root.traverse((node) => {
+    if (!(node instanceof Mesh)) return
+    const material = Array.isArray(node.material) ? node.material[0] : node.material
+    if (material instanceof MeshStandardMaterial && classifyPart(material.name) === 'wheel_rim') wheels.add(material)
+  })
+  return { paint: createPaintMaterial(), glass: createGlassMaterial(), wheels: [...wheels] }
+}
+
+/**
+ * Side effect (run in a layout effect, never during render): swap the baked
+ * role materials for the runtime clearcoat paint and coated glass, light the
+ * lamps and set shadow flags. Idempotent — roles are keyed by material name.
+ */
+const assignParts = (root: Object3D, parts: Parts, castShadow: boolean): void => {
   root.traverse((node) => {
     if (!(node instanceof Mesh)) return
     node.castShadow = castShadow
@@ -52,12 +63,10 @@ const prepareParts = (root: Object3D, castShadow: boolean): Parts => {
     const material = Array.isArray(node.material) ? node.material[0] : node.material
     if (!(material instanceof MeshStandardMaterial)) return
     const role = classifyPart(material.name)
-    if (role === 'paint') node.material = paint
-    else if (role === 'glass') node.material = glass
-    else if (role === 'wheel_rim') wheels.add(material)
+    if (role === 'paint') node.material = parts.paint
+    else if (role === 'glass') node.material = parts.glass
     else if (role === 'headlight' || role === 'taillight') material.emissiveIntensity = EMISSIVE_INTENSITY[role] ?? 1
   })
-  return { paint, glass, wheels: [...wheels] }
 }
 
 export const Porsche911 = ({ shadows }: { readonly shadows: boolean }) => {
@@ -65,10 +74,11 @@ export const Porsche911 = ({ shadows }: { readonly shadows: boolean }) => {
   const paintId = useSceneStore((s) => s.paintId)
   const wheelId = useSceneStore((s) => s.wheelId)
 
-  const parts = useMemo(() => prepareParts(scene, shadows), [scene, shadows])
+  const parts = useMemo(() => createParts(scene), [scene])
   const colorTarget = useMemo(() => new Color(), [])
 
   useLayoutEffect(() => normalize(scene), [scene])
+  useLayoutEffect(() => assignParts(scene, parts, shadows), [scene, parts, shadows])
 
   const resprayed = useRef(false)
   useEffect(() => {

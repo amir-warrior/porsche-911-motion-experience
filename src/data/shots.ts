@@ -2,7 +2,7 @@ import type { Shot } from '../utils/cameraPath'
 
 /**
  * Camera compositions in model space. The model is normalized at load time:
- * length ≈ 4.5 units along Z (nose towards +Z), wheels resting on y = 0.
+ * length 3.05 units along Z (see modelConfig) (nose towards +Z), wheels resting on y = 0.
  */
 export const SHOTS = {
   intro: { position: [9.5, 2.6, 11], target: [0, 0.6, 0], fov: 26 },

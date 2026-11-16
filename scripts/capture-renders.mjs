@@ -2,6 +2,7 @@
 // Usage: node scripts/capture-renders.mjs [baseUrl] [--qa]
 //   baseUrl defaults to http://localhost:5173 (dev or preview server must be running)
 //   --qa   also captures every camera shot into assets-src/qa/ for composition review
+//   --only=id1,id2   render a subset of the gallery manifest
 import { mkdir, readFile } from 'node:fs/promises'
 import { chromium } from '@playwright/test'
 import sharp from 'sharp'
@@ -9,6 +10,7 @@ import sharp from 'sharp'
 const args = process.argv.slice(2)
 const base = args.find((a) => a.startsWith('http')) ?? 'http://localhost:5173'
 const qa = args.includes('--qa')
+const only = args.find((a) => a.startsWith('--only='))?.slice('--only='.length).split(',')
 const OUT = 'public/images/renders'
 const SMALL_WIDTH = 1200
 const READY_TIMEOUT_MS = 180_000
@@ -53,7 +55,7 @@ try {
       console.log('qa', shot)
     }
   } else {
-    for (const item of gallery) {
+    for (const item of gallery.filter((g) => !only || only.includes(g.id))) {
       const png = await capture(item)
       await writeVariants(item.id, png)
       if (item.id === 'hero-studio') {

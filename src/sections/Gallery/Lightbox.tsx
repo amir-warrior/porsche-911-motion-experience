@@ -1,7 +1,9 @@
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { AnimatePresence, m } from 'motion/react'
 import { useEffect, useRef, type CSSProperties } from 'react'
-import { setScrollLocked } from '../../animations/scroll/smoothScroll'
+import { createPortal } from 'react-dom'
+import { lockScroll } from '../../animations/scroll/smoothScroll'
+import { makeInert } from '../../utils/inert'
 import type { GalleryItem } from '../../data/gallery'
 import { RenderImage } from './RenderImage'
 
@@ -15,7 +17,7 @@ interface LightboxProps {
 
 const SWIPE_PX = 60
 
-/** Fullscreen viewer: Esc / arrows / swipe, focus moved into the dialog and restored on close. */
+/** Fullscreen viewer portalled to <body>: Esc / arrows / swipe; the page behind is inert and focus returns on close. */
 export const Lightbox = ({ items, index, onClose, onNavigate, reduced }: LightboxProps) => {
   const closeBtn = useRef<HTMLButtonElement>(null)
   const open = index !== null
@@ -25,27 +27,33 @@ export const Lightbox = ({ items, index, onClose, onNavigate, reduced }: Lightbo
     onNavigate((index + delta + items.length) % items.length)
   }
 
+  // Latest handlers for the key listener without re-running the open/close effect.
+  const latest = useRef({ step, onClose })
+  useEffect(() => {
+    latest.current = { step, onClose }
+  })
+
   useEffect(() => {
     if (!open) return
     const previous = document.activeElement as HTMLElement | null
-    setScrollLocked(true)
+    const unlock = lockScroll()
+    const unInert = makeInert()
     closeBtn.current?.focus()
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowRight') step(1)
-      if (e.key === 'ArrowLeft') step(-1)
+      if (e.key === 'Escape') latest.current.onClose()
+      if (e.key === 'ArrowRight') latest.current.step(1)
+      if (e.key === 'ArrowLeft') latest.current.step(-1)
     }
     window.addEventListener('keydown', onKey)
     return () => {
       window.removeEventListener('keydown', onKey)
-      setScrollLocked(false)
+      unInert()
+      unlock()
       previous?.focus()
     }
-    // step depends on index, which is part of the effect identity below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, index])
+  }, [open])
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {item && index !== null ? (
         <m.div
@@ -96,6 +104,7 @@ export const Lightbox = ({ items, index, onClose, onNavigate, reduced }: Lightbo
           </div>
         </m.div>
       ) : null}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }

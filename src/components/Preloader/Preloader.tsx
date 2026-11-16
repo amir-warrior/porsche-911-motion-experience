@@ -1,7 +1,8 @@
 import { useGSAP } from '@gsap/react'
 import { gsap } from 'gsap'
 import { useEffect, useRef, useState } from 'react'
-import { setScrollLocked } from '../../animations/scroll/smoothScroll'
+import { lockScroll } from '../../animations/scroll/smoothScroll'
+import { makeInert } from '../../utils/inert'
 import { useLoadingStore } from '../../hooks/useLoadingStore'
 import { useReducedMotion } from '../../hooks/useMediaQuery'
 import { sceneActions } from '../../store/sceneStore'
@@ -37,9 +38,16 @@ export const Preloader = () => {
   const [gone, setGone] = useState(false)
   const done = assetsDone && fontsReady
 
+  // While the overlay is up: no scrolling and nothing behind it reachable by keyboard.
+  const release = useRef<(() => void) | null>(null)
   useEffect(() => {
-    setScrollLocked(true)
-    return () => setScrollLocked(false)
+    const unlock = lockScroll()
+    const unInert = makeInert()
+    release.current = () => {
+      unlock()
+      unInert()
+    }
+    return () => release.current?.()
   }, [])
 
   // Ease the displayed number towards real progress (never ahead of it).
@@ -59,7 +67,7 @@ export const Preloader = () => {
     () => {
       if (!done || !root.current) return
       const finish = () => {
-        setScrollLocked(false)
+        release.current?.()
         sceneActions.finishIntro()
         setGone(true)
       }

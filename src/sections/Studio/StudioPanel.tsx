@@ -55,6 +55,7 @@ export const StudioPanel = () => {
 
       <div className="grid grid-cols-2 gap-2 pt-1">
         <CtaButton
+          data-free-cam
           className="justify-center px-3"
           onClick={sceneActions.enterExplore}
           disabled={!webglReady}

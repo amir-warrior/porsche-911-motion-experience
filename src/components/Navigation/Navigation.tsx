@@ -3,7 +3,8 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Menu, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { scrollToTarget } from '../../animations/scroll/smoothScroll'
+import { lockScroll, scrollToTarget } from '../../animations/scroll/smoothScroll'
+import { makeInert } from '../../utils/inert'
 import { NAV_LINKS } from '../../data/site'
 import { useReducedMotion } from '../../hooks/useMediaQuery'
 import { useSceneStore } from '../../hooks/useSceneStore'
@@ -44,16 +45,25 @@ export const Navigation = () => {
     { dependencies: [introDone, reduced] },
   )
 
+  // Mobile menu behaves like a dialog: scroll locked, page behind inert, Esc closes.
   useEffect(() => {
     if (!menuOpen) return
+    const unlock = lockScroll()
+    const unInert = makeInert(['#main', 'footer'])
+    document.querySelector<HTMLElement>('#mobile-menu a')?.focus()
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false)
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      unInert()
+      unlock()
+    }
   }, [menuOpen])
 
   const go = (id: string) => {
     setMenuOpen(false)
-    scrollToTarget('#' + id)
+    // Wait one frame so the menu's scroll lock is released before gliding.
+    requestAnimationFrame(() => scrollToTarget('#' + id))
   }
 
   return (

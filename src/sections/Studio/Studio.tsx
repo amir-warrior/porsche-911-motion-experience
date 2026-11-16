@@ -1,7 +1,8 @@
 import { useGSAP } from '@gsap/react'
 import { useEffect, useRef } from 'react'
 import { registerReveals } from '../../animations/scroll/reveals'
-import { setScrollLocked } from '../../animations/scroll/smoothScroll'
+import { lockScroll } from '../../animations/scroll/smoothScroll'
+import { makeInert } from '../../utils/inert'
 import { createShotTrigger } from '../../animations/scroll/stageTriggers'
 import { SectionLabel } from '../../components/UI/SectionLabel'
 import { SplitWords } from '../../components/UI/SplitWords'
@@ -35,15 +36,19 @@ export const Studio = () => {
     { scope: root, dependencies: [reduced] },
   )
 
-  // Explore mode owns wheel/touch input: freeze page scroll, Esc to leave.
+  // Explore mode owns wheel/touch input: freeze page scroll, hide the nav from
+  // keyboard users, Esc to leave, and hand focus back to "Free cam" afterwards.
   useEffect(() => {
     if (!exploring) return
-    setScrollLocked(true)
+    const unlock = lockScroll()
+    const unInert = makeInert(['header', 'footer'])
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && sceneActions.exitExplore()
     window.addEventListener('keydown', onKey)
     return () => {
       window.removeEventListener('keydown', onKey)
-      setScrollLocked(false)
+      unInert()
+      unlock()
+      requestAnimationFrame(() => document.querySelector<HTMLElement>('[data-free-cam]')?.focus())
     }
   }, [exploring])
 

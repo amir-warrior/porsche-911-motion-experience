@@ -55,12 +55,13 @@ const StageCanvas = ({ tier, capture = false }: StageCanvasProps) => {
       camera={{ position: [...SHOTS.intro.position], fov: SHOTS.intro.fov, near: 0.1, far: 60 }}
       gl={{ antialias: true, powerPreference: 'high-performance', alpha: true, stencil: false }}
       onCreated={({ gl }) => {
+        // Hide only the bitmap from assistive tech; hotspot buttons (drei Html) stay accessible.
+        gl.domElement.setAttribute('aria-hidden', 'true')
         gl.setClearColor(0x000000, 0)
         gl.toneMapping = ACESFilmicToneMapping
         gl.outputColorSpace = SRGBColorSpace
         gl.toneMappingExposure = 1
       }}
-      aria-hidden="true"
     >
       {capture ? null : (
         <PerformanceMonitor

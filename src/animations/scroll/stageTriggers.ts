@@ -49,5 +49,9 @@ export const createShotTrigger = (section: Element, options: ShotTriggerOptions)
       options.onToggle?.(self.isActive)
     },
   })
-  return () => trigger.kill()
+  return () => {
+    // Release section-owned state (hotspots, presets) even if killed while active.
+    if (trigger.isActive) options.onToggle?.(false)
+    trigger.kill()
+  }
 }

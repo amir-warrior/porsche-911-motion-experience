@@ -14,10 +14,11 @@ import { useSceneStore } from '../../hooks/useSceneStore'
 import { sceneActions } from '../../store/sceneStore'
 import { lerpShot } from '../../utils/cameraPath'
 
-const goExplore = () => {
-  scrollToTarget('#studio')
-  window.setTimeout(() => sceneActions.enterExplore(), 900)
-}
+/** Glide to the studio first; only take over the camera once the scroll has landed. */
+const goExplore = () => scrollToTarget('#studio', { onComplete: sceneActions.enterExplore })
+
+/** The numeral lives in StageLayer (outside this section's GSAP scope), so pass the element itself. */
+const stageNumeral = (): Element[] => Array.from(document.querySelectorAll('[data-stage-numeral]'))
 
 export const Hero = () => {
   const root = useRef<HTMLElement>(null)
@@ -58,7 +59,7 @@ export const Hero = () => {
           ease: 'expo.inOut',
           onUpdate: () => setScrollShot(lerpShot(SHOTS.intro, SHOTS.hero, dolly.t)),
         })
-        .fromTo('[data-stage-numeral]', { yPercent: 18, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 2.4 }, 0.3)
+        .fromTo(stageNumeral(), { yPercent: 18, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, duration: 2.4 }, 0.3)
         .fromTo(
           '[data-hero-title] [data-split-word]',
           { yPercent: 118, rotate: 5 },
@@ -86,7 +87,7 @@ export const Hero = () => {
         const scrub = { trigger: section, start: 'top top', end: 'bottom top', scrub: true }
         // Explicit start values + no immediate render: never fights the intro timeline.
         gsap.fromTo(
-          '[data-stage-numeral]',
+          stageNumeral(),
           { yPercent: 0, autoAlpha: 1 },
           { yPercent: -35, autoAlpha: 0, ease: 'none', immediateRender: false, scrollTrigger: scrub },
         )

@@ -17,6 +17,11 @@ export const SHOTS = {
   // Car framed left of the configurator panel.
   studio: { position: [6.4, 1.9, 7.0], target: [0.8, 0.35, -0.76], fov: 30 },
   finale: { position: [-7.2, 0.55, 5.4], target: [0, 0.75, 0], fov: 28 },
+  // Stand-alone photo compositions for the gallery (car fills the frame).
+  photoFront: { position: [2.9, 0.75, 3.1], target: [0, 0.38, 0.1], fov: 30 },
+  photoHigh: { position: [3.2, 1.6, 2.9], target: [0, 0.3, 0], fov: 30 },
+  photoLow: { position: [-2.9, 0.35, 3.0], target: [0, 0.5, 0], fov: 30 },
+  photoProfile: { position: [3.6, 0.55, 0.05], target: [0, 0.42, 0.05], fov: 30 },
 } as const satisfies Record<string, Shot>
 
 export type ShotId = keyof typeof SHOTS

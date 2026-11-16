@@ -1,10 +1,10 @@
 [
-  {"id":"hero-studio","shot":"hero","env":"studio","paint":"gt-silver","width":2400,"height":1350,"layout":"wide","caption":"Studio · three-quarter front","alt":"Silver 911 Turbo S from a low front three-quarter angle under neutral studio softboxes"},
-  {"id":"profile-night","shot":"profile","env":"night","paint":"carrara-white","width":2400,"height":1030,"layout":"panorama","caption":"Night · profile","alt":"White 911 Turbo S in side profile, its silhouette traced by thin blue strip lights in darkness"},
+  {"id":"hero-studio","shot":"photoFront","env":"studio","paint":"gt-silver","width":2400,"height":1350,"layout":"wide","caption":"Studio · three-quarter front","alt":"Silver 911 Turbo S from a low front three-quarter angle under neutral studio softboxes"},
+  {"id":"profile-night","shot":"photoProfile","env":"night","paint":"carrara-white","width":2400,"height":1030,"layout":"panorama","caption":"Night · profile","alt":"White 911 Turbo S in side profile, its silhouette traced by thin blue strip lights in darkness"},
   {"id":"rear-sunset","shot":"rear","env":"sunset","paint":"guards-red","width":1600,"height":2000,"layout":"tall","caption":"Sunset · rear three-quarter","alt":"Red 911 Turbo S from the rear three-quarter, lit by low amber sunset light"},
   {"id":"wheel-studio","shot":"wheel","env":"studio","paint":"arctic-grey","width":1600,"height":2000,"layout":"tall","caption":"Studio · front wheel","alt":"Close view of the front wheel and arch of a grey 911 Turbo S"},
   {"id":"front-night","shot":"front","env":"night","paint":"gt-silver","width":1600,"height":2000,"layout":"tall","caption":"Night · head-on","alt":"Silver 911 Turbo S facing the camera head-on with reflections of cool strip lights"},
   {"id":"plan-studio","shot":"plan","env":"studio","paint":"carrara-white","width":2400,"height":1350,"layout":"wide","caption":"Studio · plan view","alt":"White 911 Turbo S seen from directly above, showing its wide rear haunches"},
-  {"id":"design-sunset","shot":"design","env":"sunset","paint":"gt-silver","width":2400,"height":1600,"layout":"wide","caption":"Sunset · three-quarter","alt":"Silver 911 Turbo S from a high three-quarter angle reflecting a violet and amber sky"},
-  {"id":"finale-night","shot":"finale","env":"night","paint":"guards-red","width":2400,"height":1350,"layout":"wide","caption":"Night · departure","alt":"Red 911 Turbo S from a low front angle, rim-lit in red against a dark background"}
+  {"id":"design-sunset","shot":"photoHigh","env":"sunset","paint":"gt-silver","width":2400,"height":1600,"layout":"wide","caption":"Sunset · three-quarter","alt":"Silver 911 Turbo S from a high three-quarter angle reflecting a violet and amber sky"},
+  {"id":"finale-night","shot":"photoLow","env":"night","paint":"guards-red","width":2400,"height":1350,"layout":"wide","caption":"Night · departure","alt":"Red 911 Turbo S from a low front angle, rim-lit in red against a dark background"}
 ]

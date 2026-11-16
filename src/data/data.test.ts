@@ -63,3 +63,18 @@ describe('story data', () => {
     expect(new Set(HOTSPOTS.map((h) => h.id)).size).toBe(HOTSPOTS.length)
   })
 })
+
+describe('engineering and site data', async () => {
+  const { ENGINEERING_STEPS } = await import('./engineering')
+  const { NAV_LINKS, SITE } = await import('./site')
+
+  it('steps quote verified figures', () => {
+    expect(ENGINEERING_STEPS).toHaveLength(4)
+    expect(ENGINEERING_STEPS[3]!.figures[0]!.value).toBe('523 kW')
+  })
+
+  it('credits the model licence and links every nav target', () => {
+    expect(SITE.model.license).toBe('CC BY 4.0')
+    expect(NAV_LINKS.map((l) => l.id)).toContain('studio')
+  })
+})

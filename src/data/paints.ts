@@ -12,7 +12,7 @@ export interface PaintOption {
 }
 
 export const PAINTS: readonly PaintOption[] = [
-  { id: 'gt-silver', name: 'GT Silver', color: '#a9abad', metalness: 0.85, roughness: 0.32, clearcoatRoughness: 0.03 },
+  { id: 'gt-silver', name: 'GT Silver', color: '#c4c6c8', metalness: 0.6, roughness: 0.3, clearcoatRoughness: 0.03 },
   { id: 'jet-black', name: 'Jet Black', color: '#0b0c0e', metalness: 0.6, roughness: 0.28, clearcoatRoughness: 0.02 },
   { id: 'guards-red', name: 'Guards Red', color: '#b0081a', metalness: 0.1, roughness: 0.38, clearcoatRoughness: 0.03 },
   { id: 'arctic-grey', name: 'Arctic Grey', color: '#8d9497', metalness: 0.05, roughness: 0.42, clearcoatRoughness: 0.04 },

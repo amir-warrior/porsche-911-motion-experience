@@ -57,7 +57,7 @@ export const ENVIRONMENTS: Record<EnvironmentId, EnvironmentPreset> = {
     background: '#030305',
     fog: { color: '#030305', near: 7, far: 18 },
     exposure: 0.95,
-    key: { color: '#9fb4ff', intensity: 1.1, position: [-3, 6, -4] },
+    key: { color: '#b4c4ff', intensity: 2.2, position: [-3, 6, -4] },
     rim: { color: '#ff2a3d', intensity: 2.4 },
     floor: '#050507',
     lightformers: [

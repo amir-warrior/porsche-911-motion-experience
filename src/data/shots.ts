@@ -6,7 +6,7 @@ import type { Shot } from '../utils/cameraPath'
  */
 export const SHOTS = {
   intro: { position: [9.5, 2.6, 11], target: [0, 0.6, 0], fov: 26 },
-  hero: { position: [5.2, 1.05, 7.4], target: [-0.9, 0.05, 0.3], fov: 30 },
+  hero: { position: [3.6, 0.8, 5.5], target: [-0.6, -0.22, 0.3], fov: 30 },
   front: { position: [0.001, 0.72, 6.4], target: [0, 0.58, 0], fov: 27 },
   profile: { position: [7.8, 0.75, 0.2], target: [0, 0.6, 0.2], fov: 26 },
   rear: { position: [-3.6, 1.15, -5.6], target: [0, 0.68, -0.2], fov: 28 },

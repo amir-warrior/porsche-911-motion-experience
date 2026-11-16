@@ -34,7 +34,7 @@ export const WHEEL_FINISHES: readonly WheelFinish[] = [
   { id: 'brushed-silver', name: 'Brushed Silver', color: '#b7b9bb', metalness: 1, roughness: 0.28 },
 ]
 
-export const DEFAULT_PAINT_ID = 'gt-silver'
+export const DEFAULT_PAINT_ID = 'carrara-white'
 export const DEFAULT_WHEEL_ID = 'turbonite'
 
 const firstOf = <T,>(items: readonly T[]): T => {
